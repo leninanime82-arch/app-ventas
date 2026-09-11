@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#176b87">
+  <meta name="description" content="Sistema de ventas para comerciantes del Fortín Guayaquil">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23176b87' width='192' height='192'/><text x='50%' y='50%' font-size='100' fill='white' text-anchor='middle' dy='.3em'>🛒</text></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23176b87' width='192' height='192'/><text x='50%' y='50%' font-size='100' fill='white' text-anchor='middle' dy='.3em'>🛒</text></svg>">
+  <title>Sistema de Ventas - Fortín</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #f5f5f5;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      padding: 10px;
+      color: #333;
+    }
+
+    .barra-superior {
+      background: #176b87;
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .titulo {
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+
+    .btn-instalar {
+      background: #27ae60;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      display: none;
+    }
+
+    .btn-instalar.visible {
+      display: block;
+    }
+
+    .btn-instalar:hover {
+      background: #229954;
+    }
+
+    .contenedor {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      min-height: 80vh;
+    }
+
+    .seccion {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow-y: auto;
+    }
+
+    h2 {
+      margin-bottom: 15px;
+      color: #176b87;
+      border-bottom: 2px solid #176b87;
+      padding-bottom: 10px;
+    }
+
+    .producto {
+      background: #f9f9f9;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      border-left: 4px solid #176b87;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .info-producto {
+      flex: 1;
+    }
+
+    .nombre-producto {
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #176b87;
+    }
+
+    .precio {
+      color: #27ae60;
+      font-size: 1.1em;
+      font-weight: bold;
+    }
+
+    .cantidad {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+
+    input[type="number"] {
+      width: 50px;
+      padding: 6px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    button {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .btn-agregar {
+      background: #27ae60;
+      color: white;
+    }
+
+    .btn-agregar:hover {
+      background: #229954;
+    }
+
+    .btn-eliminar {
+      background: #e74c3c;
+      color: white;
+      padding: 6px 10px;
+    }
+
+    .btn-eliminar:hover {
+      background: #c0392b;
+    }
+
+    .carrito-item {
+      background: #f0f0f0;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .item-detalles {
+      flex: 1;
+    }
+
+    .item-nombre {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .item-precio-total {
+      color: #27ae60;
+      font-weight: bold;
+    }
+
+    .carrito-vacio {
+      text-align: center;
+      color: #999;
+      padding: 30px;
+      font-size: 1.1em;
+    }
+
+    .resumen {
+      background: #176b87;
+      color: white;
+      padding: 15px;
+      border-radius: 6px;
+      margin-top: auto;
+    }
+
+    .linea-total {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.3);
+    }
+
+    .total-final {
+      display: flex;
+      justify-content: space-between;
+      font-size: 1.5em;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .botones-accion {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .btn-pagar {
+      background: #27ae60;
+      color: white;
+      flex: 1;
+      padding: 12px;
+      font-size: 1.1em;
+    }
+
+    .btn-pagar:hover {
+      background: #229954;
+    }
+
+    .btn-limpiar {
+      background: #e74c3c;
+      color: white;
+      flex: 1;
+      padding: 12px;
+      font-size: 1.1em;
+    }
+
+    .btn-limpiar:hover {
+      background: #c0392b;
+    }
+
+    /* Responsive para móvil */
+    @media (max-width: 800px) {
+      .contenedor {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+
+      .seccion {
+        height: auto;
+        max-height: 500px;
+      }
+
+      .barra-superior {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .btn-instalar.visible {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="barra-superior">
+    <div class="titulo">🛒 Sistema de Ventas - Fortín</div>
+    <button class="btn-instalar" id="btnInstalar">📱 Instalar App</button>
+  </div>
+
+  <div class="contenedor">
+    <!-- CATÁLOGO -->
+    <div class="seccion">
+      <h2>📦 Catálogo de Productos</h2>
+      <div id="catalogo"></div>
+    </div>
+
+    <!-- CARRITO -->
+    <div class="seccion">
+      <h2>🛒 Carrito de Compras</h2>
+      <div id="carrito"></div>
+      <div class="resumen">
+        <div class="linea-total">
+          <span>Cantidad de items:</span>
+          <span id="cantidad-items">0</span>
+        </div>
+        <div class="linea-total">
+          <span>Subtotal:</span>
+          <span id="subtotal">$0.00</span>
+        </div>
+        <div class="linea-total">
+          <span>Impuesto (10%):</span>
+          <span id="impuesto">$0.00</span>
+        </div>
+        <div class="total-final">
+          <span>TOTAL:</span>
+          <span id="total">$0.00</span>
+        </div>
+        <div class="botones-accion">
+          <button class="btn-pagar" onclick="pagarVenta()">💰 Pagar</button>
+          <button class="btn-limpiar" onclick="limpiarCarrito()">🗑️ Limpiar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Registrar Service Worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(err => console.log('SW no registrado:', err));
+    }
+
+    // Variables para instalar app
+    let deferredPrompt;
+    const btnInstalar = document.getElementById('btnInstalar');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      btnInstalar.classList.add('visible');
+    });
+
+    btnInstalar.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(`Usuario respondió al prompt: ${outcome}`);
+        deferredPrompt = null;
+        btnInstalar.classList.remove('visible');
+      }
+    });
+
+    // Productos disponibles
+    const productos = [
+      { id: 1, nombre: "Tomate", precio: 0.50, cantidad: 0 },
+      { id: 2, nombre: "Lechuga", precio: 0.75, cantidad: 0 },
+      { id: 3, nombre: "Cebolla", precio: 0.40, cantidad: 0 },
+      { id: 4, nombre: "Manzana", precio: 1.00, cantidad: 0 },
+      { id: 5, nombre: "Plátano", precio: 0.30, cantidad: 0 },
+      { id: 6, nombre: "Naranja", precio: 0.80, cantidad: 0 },
+      { id: 7, nombre: "Jugo Natural", precio: 2.00, cantidad: 0 },
+      { id: 8, nombre: "Agua Embotellada", precio: 1.50, cantidad: 0 },
+      { id: 9, nombre: "Refresco", precio: 1.75, cantidad: 0 },
+      { id: 10, nombre: "Leche", precio: 2.50, cantidad: 0 }
+    ];
+
+    // Carrito
+    let carrito = [];
+
+    // Renderizar catálogo
+    function renderizarCatalogo() {
+      const catalogo = document.getElementById("catalogo");
+      catalogo.innerHTML = "";
+
+      productos.forEach(producto => {
+        const div = document.createElement("div");
+        div.className = "producto";
+        div.innerHTML = `
+          <div class="info-producto">
+            <div class="nombre-producto">${producto.nombre}</div>
+            <div class="precio">$${producto.precio.toFixed(2)}</div>
+          </div>
+          <div class="cantidad">
+            <input type="number" min="1" value="1" id="cant-${producto.id}">
+            <button class="btn-agregar" onclick="agregarAlCarrito(${producto.id})">Agregar</button>
+          </div>
+        `;
+        catalogo.appendChild(div);
+      });
+    }
+
+    // Agregar al carrito
+    function agregarAlCarrito(id) {
+      const cantidad = parseInt(document.getElementById(`cant-${id}`).value);
+      const producto = productos.find(p => p.id === id);
+      
+      const existe = carrito.find(item => item.id === id);
+      if (existe) {
+        existe.cantidad += cantidad;
+      } else {
+        carrito.push({
+          id: producto.id,
+          nombre: producto.nombre,
+          precio: producto.precio,
+          cantidad: cantidad
+        });
+      }
+
+      renderizarCarrito();
+      document.getElementById(`cant-${id}`).value = 1;
+    }
+
+    // Renderizar carrito
+    function renderizarCarrito() {
+      const carritoDiv = document.getElementById("carrito");
+      
+      if (carrito.length === 0) {
+        carritoDiv.innerHTML = '<div class="carrito-vacio">Carrito vacío</div>';
+      } else {
+        carritoDiv.innerHTML = "";
+        carrito.forEach(item => {
+          const div = document.createElement("div");
+          div.className = "carrito-item";
+          div.innerHTML = `
+            <div class="item-detalles">
+              <div class="item-nombre">${item.nombre}</div>
+              <div>Cantidad: ${item.cantidad} x $${item.precio.toFixed(2)}</div>
+              <div class="item-precio-total">Subtotal: $${(item.cantidad * item.precio).toFixed(2)}</div>
+            </div>
+            <button class="btn-eliminar" onclick="eliminarDelCarrito(${item.id})">Eliminar</button>
+          `;
+          carritoDiv.appendChild(div);
+        });
+      }
+
+      actualizarTotales();
+    }
+
+    // Eliminar del carrito
+    function eliminarDelCarrito(id) {
+      carrito = carrito.filter(item => item.id !== id);
+      renderizarCarrito();
+    }
+
+    // Actualizar totales
+    function actualizarTotales() {
+      const subtotal = carrito.reduce((sum, item) => sum + (item.cantidad * item.precio), 0);
+      const impuesto = subtotal * 0.10;
+      const total = subtotal + impuesto;
+      const cantidadItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+
+      document.getElementById("cantidad-items").textContent = cantidadItems;
+      document.getElementById("subtotal").textContent = "$" + subtotal.toFixed(2);
+      document.getElementById("impuesto").textContent = "$" + impuesto.toFixed(2);
+      document.getElementById("total").textContent = "$" + total.toFixed(2);
+    }
+
+    // Limpiar carrito
+    function limpiarCarrito() {
+      if (confirm("¿Seguro que quieres limpiar el carrito?")) {
+        carrito = [];
+        renderizarCarrito();
+      }
+    }
+
+    // Pagar venta
+    function pagarVenta() {
+      if (carrito.length === 0) {
+        alert("El carrito está vacío");
+        return;
+      }
+
+      const total = carrito.reduce((sum, item) => sum + (item.cantidad * item.precio), 0);
+      const totalConImpuesto = total * 1.10;
+
+      const detalles = carrito.map(item => 
+        `${item.cantidad}x ${item.nombre} ($${(item.cantidad * item.precio).toFixed(2)})`
+      ).join("\n");
+
+      alert(`✅ VENTA REALIZADA\n\n${detalles}\n\nTOTAL: $${totalConImpuesto.toFixed(2)}\n\n¡Gracias por su compra!`);
+      
+      carrito = [];
+      renderizarCarrito();
+    }
+
+    // Inicializar
+    renderizarCatalogo();
+    renderizarCarrito();
+  </script>
+</body>
+</html>
